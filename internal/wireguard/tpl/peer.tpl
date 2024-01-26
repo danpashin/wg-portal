@@ -17,6 +17,35 @@ DNS = {{ .Peer.DNSStr }}
 MTU = {{.Peer.Mtu}}
 {{- end}}
 
+# AmneziaVPN settings
+{{- if ne .Interface.AdvancedSecurity.JunkPacketCount 0}}
+Jc = {{.Interface.AdvancedSecurity.JunkPacketCount}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.JunkPacketMinSize 0}}
+Jmin = {{.Interface.AdvancedSecurity.JunkPacketMinSize}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.JunkPacketMaxSize 0}}
+Jmax = {{.Interface.AdvancedSecurity.JunkPacketMaxSize}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.InitPacketJunkSize 0}}
+S1 = {{.Interface.AdvancedSecurity.InitPacketJunkSize}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.ResponsePacketJunkSize 0}}
+S2 = {{.Interface.AdvancedSecurity.ResponsePacketJunkSize}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.InitPacketMagicHeader 0}}
+H1 = {{.Interface.AdvancedSecurity.InitPacketMagicHeader}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.ResponsePacketMagicHeader 0}}
+H2 = {{.Interface.AdvancedSecurity.ResponsePacketMagicHeader}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.UnderloadPacketMagicHeader 0}}
+H3 = {{.Interface.AdvancedSecurity.UnderloadPacketMagicHeader}}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.TransportPacketMagicHeader 0}}
+H4 = {{.Interface.AdvancedSecurity.TransportPacketMagicHeader}}
+{{- end}}
+
 [Peer]
 PublicKey = {{ .Interface.PublicKey }}
 Endpoint = {{ .Peer.Endpoint }}

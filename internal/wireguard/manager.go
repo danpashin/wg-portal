@@ -3,9 +3,9 @@ package wireguard
 import (
 	"sync"
 
+	"github.com/danpashin/wgctrl"
+	"github.com/danpashin/wgctrl/wgtypes"
 	"github.com/pkg/errors"
-	"golang.zx2c4.com/wireguard/wgctrl"
-	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 )
 
 // Manager offers a synchronized management interface to the real WireGuard interface.

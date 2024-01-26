@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/danpashin/wgctrl/wgtypes"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -19,7 +20,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
-	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 	"gorm.io/gorm"
 )
 
@@ -297,6 +297,33 @@ const (
 	DeviceTypeClient DeviceType = "client"
 )
 
+type AdvancedSecurity struct {
+	JunkPacketCount            uint16 `form:"jc"`
+	JunkPacketMinSize          uint16 `form:"jmin"`
+	JunkPacketMaxSize          uint16 `form:"jmax"`
+	InitPacketJunkSize         uint16 `form:"s1"`
+	ResponsePacketJunkSize     uint16 `form:"s2"`
+	InitPacketMagicHeader      uint32 `form:"h1" binding:"gte=5"`
+	ResponsePacketMagicHeader  uint32 `form:"h2" binding:"gte=5"`
+	UnderloadPacketMagicHeader uint32 `form:"h3" binding:"gte=5"`
+	TransportPacketMagicHeader uint32 `form:"h4" binding:"gte=5"`
+}
+
+func (a AdvancedSecurity) IsEnabled() bool {
+	ret := false
+	ret = ret || a.JunkPacketCount != 0
+	ret = ret || a.JunkPacketMinSize != 0
+	ret = ret || a.JunkPacketMaxSize != 0
+	ret = ret || a.InitPacketJunkSize != 0
+	ret = ret || a.ResponsePacketJunkSize != 0
+	ret = ret || a.InitPacketMagicHeader != 0
+	ret = ret || a.ResponsePacketMagicHeader != 0
+	ret = ret || a.UnderloadPacketMagicHeader != 0
+	ret = ret || a.TransportPacketMagicHeader != 0
+
+	return ret
+}
+
 type Device struct {
 	Interface *wgtypes.Device `gorm:"-" json:"-"`
 	Peers     []Peer          `gorm:"foreignKey:DeviceName" binding:"-" json:"-"` // linked WireGuard peers
@@ -325,6 +352,8 @@ type Device struct {
 	DefaultEndpoint            string `form:"endpoint" binding:"required_if=Type server,omitempty,hostname_port"`
 	DefaultAllowedIPsStr       string `form:"allowedip" binding:"cidrlist"` // comma separated list  of IPs that are used in the client config file
 	DefaultPersistentKeepalive int    `form:"keepalive" binding:"gte=0"`
+
+	AdvancedSecurity AdvancedSecurity `gorm:"serializer:json"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -391,6 +420,51 @@ func (d Device) GetConfig() wgtypes.Config {
 		PrivateKey:   privateKey,
 		ListenPort:   &d.ListenPort,
 		FirewallMark: &fwMark,
+	}
+
+	jc := d.AdvancedSecurity.JunkPacketCount
+	if jc != 0 {
+		cfg.AdvancedSecurityConfig.JunkPacketCount = &jc
+	}
+
+	jmin := d.AdvancedSecurity.JunkPacketMinSize
+	if jmin != 0 {
+		cfg.AdvancedSecurityConfig.JunkPacketMinSize = &jmin
+	}
+
+	jmax := d.AdvancedSecurity.JunkPacketMaxSize
+	if jmax != 0 {
+		cfg.AdvancedSecurityConfig.JunkPacketMaxSize = &jmax
+	}
+
+	s1 := d.AdvancedSecurity.InitPacketJunkSize
+	if s1 != 0 {
+		cfg.AdvancedSecurityConfig.InitPacketJunkSize = &s1
+	}
+
+	s2 := d.AdvancedSecurity.ResponsePacketJunkSize
+	if s2 != 0 {
+		cfg.AdvancedSecurityConfig.ResponsePacketJunkSize = &s2
+	}
+
+	h1 := d.AdvancedSecurity.InitPacketMagicHeader
+	if h1 != 0 {
+		cfg.AdvancedSecurityConfig.InitPacketMagicHeader = &h1
+	}
+
+	h2 := d.AdvancedSecurity.ResponsePacketMagicHeader
+	if h2 != 0 {
+		cfg.AdvancedSecurityConfig.ResponsePacketMagicHeader = &h2
+	}
+
+	h3 := d.AdvancedSecurity.UnderloadPacketMagicHeader
+	if h3 != 0 {
+		cfg.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &h3
+	}
+
+	h4 := d.AdvancedSecurity.TransportPacketMagicHeader
+	if h4 != 0 {
+		cfg.AdvancedSecurityConfig.TransportPacketMagicHeader = &h4
 	}
 
 	return cfg
@@ -580,6 +654,19 @@ func (m *PeerManager) validateOrCreateDevice(dev wgtypes.Device, ipAddresses []s
 			mtu = 0
 		}
 		device.Mtu = mtu
+
+		advancedSec := dev.AdvancedSecurity
+		device.AdvancedSecurity = AdvancedSecurity{
+			JunkPacketCount:            advancedSec.JunkPacketCount,
+			JunkPacketMinSize:          advancedSec.JunkPacketMinSize,
+			JunkPacketMaxSize:          advancedSec.JunkPacketMaxSize,
+			InitPacketJunkSize:         advancedSec.InitPacketJunkSize,
+			ResponsePacketJunkSize:     advancedSec.ResponsePacketJunkSize,
+			InitPacketMagicHeader:      advancedSec.InitPacketMagicHeader,
+			ResponsePacketMagicHeader:  advancedSec.ResponsePacketMagicHeader,
+			UnderloadPacketMagicHeader: advancedSec.UnderloadPacketMagicHeader,
+			TransportPacketMagicHeader: advancedSec.TransportPacketMagicHeader,
+		}
 
 		res := m.db.Create(&device)
 		if res.Error != nil {

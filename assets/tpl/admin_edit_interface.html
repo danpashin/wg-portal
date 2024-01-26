@@ -124,6 +124,54 @@
                         </div>
                     </div>
 
+                    {{if .Device.AdvancedSecurity.IsEnabled}}
+                    <h3>AmneziaVPN Options</h3>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="server_JC">Junk Packet Count (JC)</label>
+                            <input type="number" name="jc" class="form-control" id="server_JC" value="{{.Device.AdvancedSecurity.JunkPacketCount}}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="server_JMin">Junk Packet Min Size (JMin)</label>
+                            <input type="number" name="jmin" class="form-control" id="server_JMin" value="{{.Device.AdvancedSecurity.JunkPacketMinSize}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="server_JMax">Junk Packet Max Size (JMax)</label>
+                            <input type="number" name="jmax" class="form-control" id="server_JMax" value="{{.Device.AdvancedSecurity.JunkPacketMaxSize}}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="server_S1">Init Packet Junk Size (S1)</label>
+                            <input type="number" name="s1" class="form-control" id="server_S1" value="{{.Device.AdvancedSecurity.InitPacketJunkSize}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="server_S2">Response Packet Junk Size (S2)</label>
+                            <input type="number" name="s2" class="form-control" id="server_S2" value="{{.Device.AdvancedSecurity.ResponsePacketJunkSize}}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="server_H1">Init Packet Magic Header (H1)</label>
+                            <input type="number" name="h1" class="form-control" id="server_H1" value="{{.Device.AdvancedSecurity.InitPacketMagicHeader}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="server_H2">Response Packet Magic Header (H2)</label>
+                            <input type="number" name="h2" class="form-control" id="server_H2" value="{{.Device.AdvancedSecurity.ResponsePacketMagicHeader}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="server_H3">Underload Packet Magic Header (H3)</label>
+                            <input type="number" name="h3" class="form-control" id="server_H3" value="{{.Device.AdvancedSecurity.UnderloadPacketMagicHeader}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="server_H4">Transport Packet Magic Header (H4)</label>
+                            <input type="number" name="h4" class="form-control" id="server_H4" value="{{.Device.AdvancedSecurity.TransportPacketMagicHeader}}" required>
+                        </div>
+                    </div>
+                    {{end}}
+
                     <div class="form-row">
                         <div class="d-flex align-items-center">
                             <a href="#" class="advanced-settings btn btn-link collapsed" data-toggle="collapse" data-target="#collapseAdvancedServer" aria-expanded="false" aria-controls="collapseAdvancedServer">
