@@ -44,6 +44,7 @@ PreDown = {{ .Interface.PreDown }}
 PostDown = {{ .Interface.PostDown }}
 {{- end}}
 
+{{- if .Interface.IsAdvancedSecurityEnabled}}
 # AmneziaVPN settings
 {{- if ne .Interface.AdvancedSecurity.JunkPacketCount 0}}
 Jc = {{.Interface.AdvancedSecurity.JunkPacketCount}}
@@ -71,6 +72,7 @@ H3 = {{.Interface.AdvancedSecurity.UnderloadPacketMagicHeader}}
 {{- end}}
 {{- if ne .Interface.AdvancedSecurity.TransportPacketMagicHeader 0}}
 H4 = {{.Interface.AdvancedSecurity.TransportPacketMagicHeader}}
+{{- end}}
 {{- end}}
 
 #

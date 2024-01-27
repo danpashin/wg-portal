@@ -353,10 +353,14 @@ type Device struct {
 	DefaultAllowedIPsStr       string `form:"allowedip" binding:"cidrlist"` // comma separated list  of IPs that are used in the client config file
 	DefaultPersistentKeepalive int    `form:"keepalive" binding:"gte=0"`
 
-	AdvancedSecurity AdvancedSecurity `gorm:"serializer:json"`
+	AdvancedSecurity *AdvancedSecurity `gorm:"serializer:json"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func (d Device) IsAdvancedSecurityEnabled() bool {
+	return d.AdvancedSecurity != nil
 }
 
 func (d Device) IsValid() bool {
@@ -422,49 +426,52 @@ func (d Device) GetConfig() wgtypes.Config {
 		FirewallMark: &fwMark,
 	}
 
-	jc := d.AdvancedSecurity.JunkPacketCount
-	if jc != 0 {
-		cfg.AdvancedSecurityConfig.JunkPacketCount = &jc
-	}
+	advancedSec := d.AdvancedSecurity
+	if advancedSec != nil {
+		jc := advancedSec.JunkPacketCount
+		if jc != 0 {
+			cfg.AdvancedSecurityConfig.JunkPacketCount = &jc
+		}
 
-	jmin := d.AdvancedSecurity.JunkPacketMinSize
-	if jmin != 0 {
-		cfg.AdvancedSecurityConfig.JunkPacketMinSize = &jmin
-	}
+		jmin := advancedSec.JunkPacketMinSize
+		if jmin != 0 {
+			cfg.AdvancedSecurityConfig.JunkPacketMinSize = &jmin
+		}
 
-	jmax := d.AdvancedSecurity.JunkPacketMaxSize
-	if jmax != 0 {
-		cfg.AdvancedSecurityConfig.JunkPacketMaxSize = &jmax
-	}
+		jmax := advancedSec.JunkPacketMaxSize
+		if jmax != 0 {
+			cfg.AdvancedSecurityConfig.JunkPacketMaxSize = &jmax
+		}
 
-	s1 := d.AdvancedSecurity.InitPacketJunkSize
-	if s1 != 0 {
-		cfg.AdvancedSecurityConfig.InitPacketJunkSize = &s1
-	}
+		s1 := advancedSec.InitPacketJunkSize
+		if s1 != 0 {
+			cfg.AdvancedSecurityConfig.InitPacketJunkSize = &s1
+		}
 
-	s2 := d.AdvancedSecurity.ResponsePacketJunkSize
-	if s2 != 0 {
-		cfg.AdvancedSecurityConfig.ResponsePacketJunkSize = &s2
-	}
+		s2 := advancedSec.ResponsePacketJunkSize
+		if s2 != 0 {
+			cfg.AdvancedSecurityConfig.ResponsePacketJunkSize = &s2
+		}
 
-	h1 := d.AdvancedSecurity.InitPacketMagicHeader
-	if h1 != 0 {
-		cfg.AdvancedSecurityConfig.InitPacketMagicHeader = &h1
-	}
+		h1 := advancedSec.InitPacketMagicHeader
+		if h1 != 0 {
+			cfg.AdvancedSecurityConfig.InitPacketMagicHeader = &h1
+		}
 
-	h2 := d.AdvancedSecurity.ResponsePacketMagicHeader
-	if h2 != 0 {
-		cfg.AdvancedSecurityConfig.ResponsePacketMagicHeader = &h2
-	}
+		h2 := advancedSec.ResponsePacketMagicHeader
+		if h2 != 0 {
+			cfg.AdvancedSecurityConfig.ResponsePacketMagicHeader = &h2
+		}
 
-	h3 := d.AdvancedSecurity.UnderloadPacketMagicHeader
-	if h3 != 0 {
-		cfg.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &h3
-	}
+		h3 := advancedSec.UnderloadPacketMagicHeader
+		if h3 != 0 {
+			cfg.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &h3
+		}
 
-	h4 := d.AdvancedSecurity.TransportPacketMagicHeader
-	if h4 != 0 {
-		cfg.AdvancedSecurityConfig.TransportPacketMagicHeader = &h4
+		h4 := advancedSec.TransportPacketMagicHeader
+		if h4 != 0 {
+			cfg.AdvancedSecurityConfig.TransportPacketMagicHeader = &h4
+		}
 	}
 
 	return cfg
@@ -656,16 +663,18 @@ func (m *PeerManager) validateOrCreateDevice(dev wgtypes.Device, ipAddresses []s
 		device.Mtu = mtu
 
 		advancedSec := dev.AdvancedSecurity
-		device.AdvancedSecurity = AdvancedSecurity{
-			JunkPacketCount:            advancedSec.JunkPacketCount,
-			JunkPacketMinSize:          advancedSec.JunkPacketMinSize,
-			JunkPacketMaxSize:          advancedSec.JunkPacketMaxSize,
-			InitPacketJunkSize:         advancedSec.InitPacketJunkSize,
-			ResponsePacketJunkSize:     advancedSec.ResponsePacketJunkSize,
-			InitPacketMagicHeader:      advancedSec.InitPacketMagicHeader,
-			ResponsePacketMagicHeader:  advancedSec.ResponsePacketMagicHeader,
-			UnderloadPacketMagicHeader: advancedSec.UnderloadPacketMagicHeader,
-			TransportPacketMagicHeader: advancedSec.TransportPacketMagicHeader,
+		if advancedSec.IsEnabled() {
+			device.AdvancedSecurity = &AdvancedSecurity{
+				JunkPacketCount:            advancedSec.JunkPacketCount,
+				JunkPacketMinSize:          advancedSec.JunkPacketMinSize,
+				JunkPacketMaxSize:          advancedSec.JunkPacketMaxSize,
+				InitPacketJunkSize:         advancedSec.InitPacketJunkSize,
+				ResponsePacketJunkSize:     advancedSec.ResponsePacketJunkSize,
+				InitPacketMagicHeader:      advancedSec.InitPacketMagicHeader,
+				ResponsePacketMagicHeader:  advancedSec.ResponsePacketMagicHeader,
+				UnderloadPacketMagicHeader: advancedSec.UnderloadPacketMagicHeader,
+				TransportPacketMagicHeader: advancedSec.TransportPacketMagicHeader,
+			}
 		}
 
 		res := m.db.Create(&device)
