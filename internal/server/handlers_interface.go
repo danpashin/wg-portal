@@ -29,6 +29,7 @@ func (s *Server) GetAdminEditInterface(c *gin.Context) {
 		"EditableKeys": s.config.Core.EditableKeys,
 		"DeviceNames":  s.GetDeviceNames(),
 		"Csrf":         csrf.GetToken(c),
+		"IsAmnezia":    s.wg.IsDeviceSupportsAmnezia(currentSession.DeviceName),
 	})
 }
 

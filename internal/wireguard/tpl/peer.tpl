@@ -17,7 +17,7 @@ DNS = {{ .Peer.DNSStr }}
 MTU = {{.Peer.Mtu}}
 {{- end}}
 
-{{- if .Interface.IsAdvancedSecurityEnabled}}
+{{- if .Interface.AdvancedSecurity.IsEnabled}}
 # AmneziaVPN settings
 {{- if ne .Interface.AdvancedSecurity.JunkPacketCount 0}}
 Jc = {{.Interface.AdvancedSecurity.JunkPacketCount}}

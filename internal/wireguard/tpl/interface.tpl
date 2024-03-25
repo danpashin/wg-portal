@@ -44,7 +44,7 @@ PreDown = {{ .Interface.PreDown }}
 PostDown = {{ .Interface.PostDown }}
 {{- end}}
 
-{{- if .Interface.IsAdvancedSecurityEnabled}}
+{{- if .Interface.AdvancedSecurity.IsEnabled}}
 # AmneziaVPN settings
 {{- if ne .Interface.AdvancedSecurity.JunkPacketCount 0}}
 Jc = {{.Interface.AdvancedSecurity.JunkPacketCount}}

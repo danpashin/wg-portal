@@ -3,7 +3,7 @@ module github.com/h44z/wg-portal
 go 1.18
 
 require (
-	github.com/danpashin/wgctrl v0.0.0-20240126135047-4a636c10afe0
+	github.com/danpashin/wgctrl v0.0.0-20240325172530-900048347eb5
 	github.com/evanphx/json-patch v5.6.0+incompatible
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.1
