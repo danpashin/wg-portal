@@ -269,6 +269,10 @@ onMounted(async () => {
                   <td>{{ $t('interfaces.interface.total-peers') }}:</td>
                   <td>{{interfaces.GetSelected.TotalPeers}}</td>
                 </tr>
+                <tr>
+                  <td>{{ $t('interfaces.interface.awg-mode') }}:</td>
+                  <td>{{interfaces.GetSelected.UsesAdvancedSecurity}}</td>
+                </tr>
                 </tbody>
               </table>
             </div>

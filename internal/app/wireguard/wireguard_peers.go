@@ -118,6 +118,8 @@ func (m Manager) PreparePeer(ctx context.Context, id domain.InterfaceIdentifier)
 		peerMode = domain.InterfaceTypeServer
 	}
 
+	fmt.Println(iface.AdvancedSecurity)
+
 	peerId := domain.PeerIdentifier(kp.PublicKey)
 	freshPeer := &domain.Peer{
 		BaseModel: domain.BaseModel{
@@ -153,6 +155,7 @@ func (m Manager) PreparePeer(ctx context.Context, id domain.InterfaceIdentifier)
 			PostUp:            domain.NewConfigOption(iface.PeerDefPostUp, true),
 			PreDown:           domain.NewConfigOption(iface.PeerDefPreDown, true),
 			PostDown:          domain.NewConfigOption(iface.PeerDefPostDown, true),
+			AdvancedSecurity:  iface.AdvancedSecurity,
 		},
 	}
 	freshPeer.GenerateDisplayName("")

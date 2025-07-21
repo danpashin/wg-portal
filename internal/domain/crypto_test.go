@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/danpashin/wgctrl/wgtypes"
 	"github.com/stretchr/testify/assert"
-	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 )
 
 func TestKeyPair_GetPrivateKeyBytesReturnsCorrectBytes(t *testing.T) {

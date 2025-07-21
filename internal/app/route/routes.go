@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/danpashin/wgctrl/wgtypes"
 	"github.com/vishvananda/netlink"
 	"golang.org/x/sys/unix"
-	"golang.zx2c4.com/wireguard/wgctrl"
-	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 
+	"github.com/h44z/wg-portal/internal/adapters"
 	"github.com/h44z/wg-portal/internal/app"
 	"github.com/h44z/wg-portal/internal/config"
 	"github.com/h44z/wg-portal/internal/domain"
@@ -45,18 +45,15 @@ type routeRuleInfo struct {
 type Manager struct {
 	cfg *config.Config
 
-	bus EventBus
-	wg  lowlevel.WireGuardClient
-	nl  lowlevel.NetlinkClient
-	db  InterfaceAndPeerDatabaseRepo
+	bus    EventBus
+	wgRepo *adapters.WgRepo
+	nl     lowlevel.NetlinkClient
+	db     InterfaceAndPeerDatabaseRepo
 }
 
 // NewRouteManager creates a new route manager instance.
 func NewRouteManager(cfg *config.Config, bus EventBus, db InterfaceAndPeerDatabaseRepo) (*Manager, error) {
-	wg, err := wgctrl.New()
-	if err != nil {
-		panic("failed to init wgctrl: " + err.Error())
-	}
+	wgRepo := adapters.NewWireGuardRepository()
 
 	nl := &lowlevel.NetlinkManager{}
 
@@ -64,9 +61,9 @@ func NewRouteManager(cfg *config.Config, bus EventBus, db InterfaceAndPeerDataba
 		cfg: cfg,
 		bus: bus,
 
-		db: db,
-		wg: wg,
-		nl: nl,
+		db:     db,
+		wgRepo: wgRepo,
+		nl:     nl,
 	}
 
 	m.connectToMessageBus()
@@ -475,7 +472,8 @@ func (m Manager) getRoutingTableAndFwMark(iface *domain.Interface, link netlink.
 }
 
 func (m Manager) setFwMark(id domain.InterfaceIdentifier, fwmark int) error {
-	err := m.wg.ConfigureDevice(string(id), wgtypes.Config{
+	client := m.wgRepo.Clients[string(id)]
+	err := client.ConfigureDevice(string(id), wgtypes.Config{
 		FirewallMark: &fwmark,
 	})
 	if err != nil {

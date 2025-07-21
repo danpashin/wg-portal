@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
+	"github.com/danpashin/wgctrl/wgtypes"
 
 	"github.com/h44z/wg-portal/internal"
 	"github.com/h44z/wg-portal/internal/config"
@@ -120,6 +120,7 @@ func (p *Peer) ApplyInterfaceDefaults(in *Interface) {
 	p.Interface.PostUp.TrySetValue(in.PeerDefPostUp)
 	p.Interface.PreDown.TrySetValue(in.PeerDefPreDown)
 	p.Interface.PostDown.TrySetValue(in.PeerDefPostDown)
+	p.Interface.AdvancedSecurity = in.AdvancedSecurity
 }
 
 func (p *Peer) GenerateDisplayName(prefix string) {
@@ -143,6 +144,7 @@ func (p *Peer) OverwriteUserEditableFields(userPeer *Peer, cfg *config.Config) {
 	p.ExpiresAt = userPeer.ExpiresAt
 	p.Disabled = userPeer.Disabled
 	p.DisabledReason = userPeer.DisabledReason
+	p.Interface.AdvancedSecurity = userPeer.Interface.AdvancedSecurity
 }
 
 type PeerInterfaceConfig struct {
@@ -162,6 +164,12 @@ type PeerInterfaceConfig struct {
 	PostUp   ConfigOption[string] `gorm:"embedded;embeddedPrefix:iface_post_up_"`   // action that is executed after the device is up
 	PreDown  ConfigOption[string] `gorm:"embedded;embeddedPrefix:iface_pre_down_"`  // action that is executed before the device is down
 	PostDown ConfigOption[string] `gorm:"embedded;embeddedPrefix:iface_post_down_"` // action that is executed after the device is down
+
+	AdvancedSecurity *AdvancedSecurity `gorm:"serializer:json"`
+}
+
+func (p *PeerInterfaceConfig) HasAdvancesSecurity() bool {
+	return p.AdvancedSecurity != nil
 }
 
 func (p *PeerInterfaceConfig) AddressStr() string {
@@ -182,6 +190,8 @@ type PhysicalPeer struct {
 
 	BytesUpload   uint64 // upload bytes are the number of bytes that the remote peer has sent to the server
 	BytesDownload uint64 // upload bytes are the number of bytes that the remote peer has received from the server
+
+	AdvancedSecurity *AdvancedSecurity
 }
 
 func (p PhysicalPeer) GetPresharedKey() *wgtypes.Key {
@@ -240,7 +250,8 @@ func ConvertPhysicalPeer(pp *PhysicalPeer) *Peer {
 		InterfaceIdentifier: "",
 		Disabled:            nil,
 		Interface: PeerInterfaceConfig{
-			KeyPair: pp.KeyPair,
+			KeyPair:          pp.KeyPair,
+			AdvancedSecurity: pp.AdvancedSecurity,
 		},
 	}
 
@@ -265,6 +276,7 @@ func MergeToPhysicalPeer(pp *PhysicalPeer, p *Peer) {
 	pp.PresharedKey = p.PresharedKey
 	pp.PublicKey = p.Interface.PublicKey
 	pp.PersistentKeepalive = p.PersistentKeepalive.GetValue()
+	pp.AdvancedSecurity = p.Interface.AdvancedSecurity
 }
 
 type PeerCreationRequest struct {

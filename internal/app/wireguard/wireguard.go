@@ -2,6 +2,7 @@ package wireguard
 
 import (
 	"context"
+	"github.com/danpashin/wgctrl/wgtypes"
 	"log/slog"
 	"sync"
 	"time"
@@ -43,6 +44,7 @@ type InterfaceController interface {
 	GetPeers(_ context.Context, deviceId domain.InterfaceIdentifier) ([]domain.PhysicalPeer, error)
 	SaveInterface(
 		_ context.Context,
+		clientType wgtypes.ClientType,
 		id domain.InterfaceIdentifier,
 		updateFunc func(pi *domain.PhysicalInterface) (*domain.PhysicalInterface, error),
 	) error

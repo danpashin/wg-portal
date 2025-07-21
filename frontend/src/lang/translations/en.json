@@ -117,7 +117,8 @@
       "button-show-config": "Show configuration",
       "button-download-config": "Download configuration",
       "button-store-config": "Store configuration for wg-quick",
-      "button-edit": "Edit interface"
+      "button-edit": "Edit interface",
+      "awg-mode": "AmneziaWG Mode"
     },
     "button-add-interface": "Add Interface",
     "button-add-peer": "Add Peer",
@@ -413,6 +414,7 @@
           "placeholder": "Persistent Keepalive (0 = default)"
         }
       },
+      "header-awg-mode": "AmneziaWG Mode",
 
       "button-apply-defaults": "Apply Peer Defaults"
     },

@@ -522,7 +522,7 @@ func (m Manager) saveInterface(ctx context.Context, iface *domain.Interface) (
 	err := m.db.SaveInterface(ctx, iface.Identifier, func(i *domain.Interface) (*domain.Interface, error) {
 		iface.CopyCalculatedAttributes(i)
 
-		err := m.wg.SaveInterface(ctx, iface.Identifier,
+		err := m.wg.SaveInterface(ctx, iface.ClientType, iface.Identifier,
 			func(pi *domain.PhysicalInterface) (*domain.PhysicalInterface, error) {
 				domain.MergeToPhysicalInterface(pi, iface)
 				return pi, nil
@@ -770,6 +770,7 @@ func (m Manager) importInterface(ctx context.Context, in *domain.PhysicalInterfa
 		UpdatedAt: now,
 	}
 	iface.PeerDefAllowedIPsStr = iface.AddressStr()
+	iface.AdvancedSecurity = in.AdvancedSecurity
 
 	existingInterface, err := m.db.GetInterface(ctx, iface.Identifier)
 	if err != nil && !errors.Is(err, domain.ErrNotFound) {
@@ -820,6 +821,7 @@ func (m Manager) importPeer(ctx context.Context, in *domain.Interface, p *domain
 	peer.Interface.PostUp = domain.NewConfigOption(in.PeerDefPostUp, true)
 	peer.Interface.PreDown = domain.NewConfigOption(in.PeerDefPreDown, true)
 	peer.Interface.PostDown = domain.NewConfigOption(in.PeerDefPostDown, true)
+	peer.Interface.AdvancedSecurity = in.AdvancedSecurity
 
 	switch in.Type {
 	case domain.InterfaceTypeAny:

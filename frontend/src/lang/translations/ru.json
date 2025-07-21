@@ -115,7 +115,8 @@
       "button-show-config": "Показать конфигурацию",
       "button-download-config": "Скачать конфигурацию",
       "button-store-config": "Сохранить конфигурацию для wg-quick",
-      "button-edit": "Редактировать интерфейс"
+      "button-edit": "Редактировать интерфейс",
+      "awg-mode": "Режим AmneziaWG"
     },
     "button-add-interface": "Добавить интерфейс",
     "button-add-peer": "Добавить пира",
@@ -354,6 +355,7 @@
           "placeholder": "Постоянное поддержание активности (0 = значение по умолчанию)"
         }
       },
+      "header-awg-mode": "Режим AmneziaWG",
       "button-apply-defaults": "Применить настройки пира по умолчанию"
     },
     "peer-view": {

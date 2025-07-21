@@ -19,6 +19,29 @@
 PrivateKey = {{ .Interface.KeyPair.PrivateKey }}
 Address = {{ CidrsToString .Interface.Addresses }}
 
+# AmneziaWG settings
+{{- if .Interface.HasAdvancesSecurity }}
+{{- if ne .Interface.AdvancedSecurity.JunkPacketCount 0}}
+Jc = {{ .Interface.AdvancedSecurity.JunkPacketCount }}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.JunkPacketMinSize 0}}
+Jmin = {{ .Interface.AdvancedSecurity.JunkPacketMinSize }}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.JunkPacketMaxSize 0}}
+Jmax = {{ .Interface.AdvancedSecurity.JunkPacketMaxSize }}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.InitPacketJunkSize 0}}
+S1 = {{ .Interface.AdvancedSecurity.InitPacketJunkSize }}
+{{- end}}
+{{- if ne .Interface.AdvancedSecurity.ResponsePacketJunkSize 0}}
+S2 = {{ .Interface.AdvancedSecurity.ResponsePacketJunkSize }}
+{{- end}}
+H1 = {{ .Interface.AdvancedSecurity.InitPacketMagicHeader }}
+H2 = {{ .Interface.AdvancedSecurity.ResponsePacketMagicHeader }}
+H3 = {{ .Interface.AdvancedSecurity.UnderloadPacketMagicHeader }}
+H4 = {{ .Interface.AdvancedSecurity.TransportPacketMagicHeader }}
+{{- end}}
+
 # Misc. settings (optional)
 {{- if ne .Interface.ListenPort 0}}
 ListenPort = {{ .Interface.ListenPort }}

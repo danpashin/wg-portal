@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"github.com/danpashin/wgctrl/wgtypes"
 	"log/slog"
 	"math"
 	"net"
@@ -23,6 +24,18 @@ var allowedFileNameRegex = regexp.MustCompile("[^a-zA-Z0-9-_]+")
 
 type InterfaceIdentifier string
 type InterfaceType string
+
+type AdvancedSecurity struct {
+	JunkPacketCount            uint16 `json:"jc"`
+	JunkPacketMinSize          uint16 `json:"jmin"`
+	JunkPacketMaxSize          uint16 `json:"jmax"`
+	InitPacketJunkSize         uint16 `json:"s1"`
+	ResponsePacketJunkSize     uint16 `json:"s2"`
+	InitPacketMagicHeader      uint32 `json:"h1" binding:"gte=5"`
+	ResponsePacketMagicHeader  uint32 `json:"h2" binding:"gte=5"`
+	UnderloadPacketMagicHeader uint32 `json:"h3" binding:"gte=5"`
+	TransportPacketMagicHeader uint32 `json:"h4" binding:"gte=5"`
+}
 
 type Interface struct {
 	BaseModel
@@ -72,6 +85,13 @@ type Interface struct {
 	PeerDefPostUp   string // default action that is executed after the device is up
 	PeerDefPreDown  string // default action that is executed before the device is down
 	PeerDefPostDown string // default action that is executed after the device is down
+
+	ClientType       wgtypes.ClientType
+	AdvancedSecurity *AdvancedSecurity `gorm:"serializer:json"`
+}
+
+func (d *Interface) HasAdvancedSecurity() bool {
+	return d.AdvancedSecurity != nil
 }
 
 // PublicInfo returns a copy of the interface with only the public information.
@@ -204,6 +224,14 @@ type PhysicalInterface struct {
 
 	BytesUpload   uint64
 	BytesDownload uint64
+
+	ClientType wgtypes.ClientType
+
+	AdvancedSecurity *AdvancedSecurity
+}
+
+func (pi *PhysicalInterface) HasAdvancedSecurity() bool {
+	return pi.AdvancedSecurity != nil
 }
 
 func ConvertPhysicalInterface(pi *PhysicalInterface) *Interface {
@@ -239,6 +267,7 @@ func ConvertPhysicalInterface(pi *PhysicalInterface) *Interface {
 		PeerDefPostUp:              "",
 		PeerDefPreDown:             "",
 		PeerDefPostDown:            "",
+		AdvancedSecurity:           pi.AdvancedSecurity,
 	}
 
 	return iface
@@ -253,6 +282,7 @@ func MergeToPhysicalInterface(pi *PhysicalInterface, i *Interface) {
 	pi.FirewallMark = i.FirewallMark
 	pi.DeviceUp = !i.IsDisabled()
 	pi.Addresses = i.Addresses
+	pi.AdvancedSecurity = i.AdvancedSecurity
 }
 
 type RoutingTableInfo struct {

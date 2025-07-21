@@ -23,6 +23,29 @@
 PrivateKey = {{ .Peer.Interface.KeyPair.PrivateKey }}
 Address = {{ CidrsToString .Peer.Interface.Addresses }}
 
+# AmneziaWG settings
+{{- if .Peer.Interface.HasAdvancesSecurity }}
+{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketCount 0}}
+Jc = {{.Peer.Interface.AdvancedSecurity.JunkPacketCount}}
+{{- end}}
+{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketMinSize 0}}
+Jmin = {{.Peer.Interface.AdvancedSecurity.JunkPacketMinSize}}
+{{- end}}
+{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketMaxSize 0}}
+Jmax = {{.Peer.Interface.AdvancedSecurity.JunkPacketMaxSize}}
+{{- end}}
+{{- if ne .Peer.Interface.AdvancedSecurity.InitPacketJunkSize 0}}
+S1 = {{.Peer.Interface.AdvancedSecurity.InitPacketJunkSize}}
+{{- end}}
+{{- if ne .Peer.Interface.AdvancedSecurity.ResponsePacketJunkSize 0}}
+S2 = {{.Peer.Interface.AdvancedSecurity.ResponsePacketJunkSize}}
+{{- end}}
+H1 = {{.Peer.Interface.AdvancedSecurity.InitPacketMagicHeader}}
+H2 = {{.Peer.Interface.AdvancedSecurity.ResponsePacketMagicHeader}}
+H3 = {{.Peer.Interface.AdvancedSecurity.UnderloadPacketMagicHeader}}
+H4 = {{.Peer.Interface.AdvancedSecurity.TransportPacketMagicHeader}}
+{{- end}}
+
 # Misc. settings (optional)
 {{- if .Peer.Interface.DnsStr.GetValue}}
 DNS = {{ .Peer.Interface.DnsStr.GetValue }} {{- if .Peer.Interface.DnsSearchStr.GetValue}}, {{ .Peer.Interface.DnsSearchStr.GetValue }} {{- end}}
