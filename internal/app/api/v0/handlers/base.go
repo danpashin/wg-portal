@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-pkgz/routegroup"
+	"github.com/h44z/wg-portal/internal/app/api/core/middleware/cors"
 
 	"github.com/h44z/wg-portal/internal/app/api/core"
-	"github.com/h44z/wg-portal/internal/app/api/core/middleware/cors"
 	"github.com/h44z/wg-portal/internal/app/api/core/middleware/csrf"
 	"github.com/h44z/wg-portal/internal/app/api/core/respond"
 )

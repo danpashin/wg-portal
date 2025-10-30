@@ -23,27 +23,61 @@
 PrivateKey = {{ .Peer.Interface.KeyPair.PrivateKey }}
 Address = {{ CidrsToString .Peer.Interface.Addresses }}
 
-# AmneziaWG settings
-{{- if .Peer.Interface.HasAdvancesSecurity }}
-{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketCount 0}}
-Jc = {{.Peer.Interface.AdvancedSecurity.JunkPacketCount}}
+{{if .Peer.Interface.HasAdvancedSecurity }}
+###############################
+# AmneziaWG section
+###############################
+{{- $advSec := .Peer.Interface.AdvancedSecurity}}
+
+# Junk settings
+{{- if ne $advSec.JunkPacketCount 0}}
+Jc = {{$advSec.JunkPacketCount}}
 {{- end}}
-{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketMinSize 0}}
-Jmin = {{.Peer.Interface.AdvancedSecurity.JunkPacketMinSize}}
+{{- if ne $advSec.JunkPacketMinSize 0}}
+Jmin = {{$advSec.JunkPacketMinSize}}
 {{- end}}
-{{- if ne .Peer.Interface.AdvancedSecurity.JunkPacketMaxSize 0}}
-Jmax = {{.Peer.Interface.AdvancedSecurity.JunkPacketMaxSize}}
+{{- if ne $advSec.JunkPacketMaxSize 0}}
+Jmax = {{$advSec.JunkPacketMaxSize}}
 {{- end}}
-{{- if ne .Peer.Interface.AdvancedSecurity.InitPacketJunkSize 0}}
-S1 = {{.Peer.Interface.AdvancedSecurity.InitPacketJunkSize}}
+{{- if ne $advSec.InitPacketJunkSize 0}}
+S1 = {{$advSec.InitPacketJunkSize}}
 {{- end}}
-{{- if ne .Peer.Interface.AdvancedSecurity.ResponsePacketJunkSize 0}}
-S2 = {{.Peer.Interface.AdvancedSecurity.ResponsePacketJunkSize}}
+{{- if ne $advSec.ResponsePacketJunkSize 0}}
+S2 = {{$advSec.ResponsePacketJunkSize}}
 {{- end}}
-H1 = {{.Peer.Interface.AdvancedSecurity.InitPacketMagicHeader}}
-H2 = {{.Peer.Interface.AdvancedSecurity.ResponsePacketMagicHeader}}
-H3 = {{.Peer.Interface.AdvancedSecurity.UnderloadPacketMagicHeader}}
-H4 = {{.Peer.Interface.AdvancedSecurity.TransportPacketMagicHeader}}
+{{- if ne $advSec.CookieReplyPacketJunkSize 0}}
+S3 = {{$advSec.CookieReplyPacketJunkSize}}
+{{- end}}
+{{- if ne $advSec.TransportPacketJunkSize 0}}
+S4 = {{ $advSec.TransportPacketJunkSize }}
+{{- end}}
+
+# Wireguard payload boundaries
+H1 = {{$advSec.InitPacketMagicHeader}}
+H2 = {{$advSec.ResponsePacketMagicHeader}}
+H3 = {{$advSec.UnderloadPacketMagicHeader}}
+H4 = {{$advSec.TransportPacketMagicHeader}}
+
+# Custom junk settings
+{{- if IsAwgString $advSec.FirstSpecialJunkPacket}}
+I1 = {{ $advSec.FirstSpecialJunkPacket }}
+{{- end}}
+{{- if IsAwgString $advSec.SecondSpecialJunkPacket}}
+I1 = {{ $advSec.SecondSpecialJunkPacket }}
+{{- end}}
+{{- if IsAwgString $advSec.ThirdSpecialJunkPacket}}
+I1 = {{ $advSec.ThirdSpecialJunkPacket }}
+{{- end}}
+{{- if IsAwgString $advSec.FourthSpecialJunkPacket}}
+I1 = {{ $advSec.FourthSpecialJunkPacket }}
+{{- end}}
+{{- if IsAwgString $advSec.FifthSpecialJunkPacket}}
+I1 = {{ $advSec.FifthSpecialJunkPacket }}
+{{- end}}
+
+###############################
+# End of AmneziaWG section
+###############################
 {{- end}}
 
 # Misc. settings (optional)

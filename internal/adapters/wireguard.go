@@ -116,6 +116,10 @@ func (r *WgRepo) GetInterface(_ context.Context, id domain.InterfaceIdentifier) 
 // If the requested interface is found, an error os.ErrNotExist is returned.
 func (r *WgRepo) GetPeers(_ context.Context, deviceId domain.InterfaceIdentifier) ([]domain.PhysicalPeer, error) {
 	client := r.Clients[string(deviceId)]
+	if client == nil {
+		return nil, fmt.Errorf("nullable client for %s", deviceId)
+	}
+
 	device, err := client.Device(string(deviceId))
 	if err != nil {
 		return nil, fmt.Errorf("device error: %w", err)
@@ -166,15 +170,25 @@ func (r *WgRepo) convertWireGuardInterface(clientType wgtypes.ClientType, device
 
 	if device.HasAdvancedSecurity() {
 		iface.AdvancedSecurity = &domain.AdvancedSecurity{
-			JunkPacketCount:            device.AdvancedSecurity.JunkPacketCount,
-			JunkPacketMinSize:          device.AdvancedSecurity.JunkPacketMinSize,
-			JunkPacketMaxSize:          device.AdvancedSecurity.JunkPacketMaxSize,
-			InitPacketJunkSize:         device.AdvancedSecurity.InitPacketJunkSize,
-			ResponsePacketJunkSize:     device.AdvancedSecurity.ResponsePacketJunkSize,
+			JunkPacketCount:   device.AdvancedSecurity.JunkPacketCount,
+			JunkPacketMinSize: device.AdvancedSecurity.JunkPacketMinSize,
+			JunkPacketMaxSize: device.AdvancedSecurity.JunkPacketMaxSize,
+
+			InitPacketJunkSize:        device.AdvancedSecurity.InitPacketJunkSize,
+			ResponsePacketJunkSize:    device.AdvancedSecurity.ResponsePacketJunkSize,
+			CookieReplyPacketJunkSize: device.AdvancedSecurity.CookieReplyPacketJunkSize,
+			TransportPacketJunkSize:   device.AdvancedSecurity.TransportPacketJunkSize,
+
 			InitPacketMagicHeader:      device.AdvancedSecurity.InitPacketMagicHeader,
 			ResponsePacketMagicHeader:  device.AdvancedSecurity.ResponsePacketMagicHeader,
 			UnderloadPacketMagicHeader: device.AdvancedSecurity.UnderloadPacketMagicHeader,
 			TransportPacketMagicHeader: device.AdvancedSecurity.TransportPacketMagicHeader,
+
+			FirstSpecialJunkPacket:  device.AdvancedSecurity.FirstSpecialJunkPacket,
+			SecondSpecialJunkPacket: device.AdvancedSecurity.SecondSpecialJunkPacket,
+			ThirdSpecialJunkPacket:  device.AdvancedSecurity.ThirdSpecialJunkPacket,
+			FourthSpecialJunkPacket: device.AdvancedSecurity.FourthSpecialJunkPacket,
+			FifthSpecialJunkPacket:  device.AdvancedSecurity.FifthSpecialJunkPacket,
 		}
 	}
 
@@ -282,6 +296,10 @@ func (r *WgRepo) getOrCreateInterface(clientType wgtypes.ClientType, id domain.I
 
 func (r *WgRepo) getInterface(id domain.InterfaceIdentifier) (*domain.PhysicalInterface, error) {
 	client := r.Clients[string(id)]
+	if client == nil {
+		return nil, fmt.Errorf("nullable client for %s", id)
+	}
+
 	device, err := client.Device(string(id))
 	if err != nil {
 		return nil, err
@@ -392,15 +410,29 @@ func (r *WgRepo) updateWireGuardInterface(pi *domain.PhysicalInterface) error {
 		config.AdvancedSecurityConfig.JunkPacketCount = &advSec.JunkPacketCount
 		config.AdvancedSecurityConfig.JunkPacketMinSize = &advSec.JunkPacketMinSize
 		config.AdvancedSecurityConfig.JunkPacketMaxSize = &advSec.JunkPacketMaxSize
+
 		config.AdvancedSecurityConfig.InitPacketJunkSize = &advSec.InitPacketJunkSize
 		config.AdvancedSecurityConfig.ResponsePacketJunkSize = &advSec.ResponsePacketJunkSize
+		config.AdvancedSecurityConfig.CookieReplyPacketJunkSize = &advSec.CookieReplyPacketJunkSize
+		config.AdvancedSecurityConfig.TransportPacketJunkSize = &advSec.TransportPacketJunkSize
+
 		config.AdvancedSecurityConfig.InitPacketMagicHeader = &advSec.InitPacketMagicHeader
 		config.AdvancedSecurityConfig.ResponsePacketMagicHeader = &advSec.ResponsePacketMagicHeader
 		config.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &advSec.UnderloadPacketMagicHeader
 		config.AdvancedSecurityConfig.TransportPacketMagicHeader = &advSec.TransportPacketMagicHeader
+
+		config.AdvancedSecurityConfig.FirstSpecialJunkPacket = advSec.FirstSpecialJunkPacket
+		config.AdvancedSecurityConfig.SecondSpecialJunkPacket = advSec.SecondSpecialJunkPacket
+		config.AdvancedSecurityConfig.ThirdSpecialJunkPacket = advSec.ThirdSpecialJunkPacket
+		config.AdvancedSecurityConfig.FourthSpecialJunkPacket = advSec.FourthSpecialJunkPacket
+		config.AdvancedSecurityConfig.FifthSpecialJunkPacket = advSec.FifthSpecialJunkPacket
 	}
 
 	client := r.Clients[string(pi.Identifier)]
+	if client == nil {
+		return fmt.Errorf("nullable client for %s", pi.Identifier)
+	}
+
 	err = client.ConfigureDevice(string(pi.Identifier), config)
 	if err != nil {
 		return err
@@ -476,6 +508,10 @@ func (r *WgRepo) getOrCreatePeer(deviceId domain.InterfaceIdentifier, id domain.
 
 	// create new peer
 	client := r.Clients[string(deviceId)]
+	if client == nil {
+		return nil, fmt.Errorf("nullable client for %s", deviceId)
+	}
+
 	err = client.ConfigureDevice(string(deviceId), wgtypes.Config{
 		Peers: []wgtypes.PeerConfig{
 			{
@@ -500,6 +536,10 @@ func (r *WgRepo) getPeer(deviceId domain.InterfaceIdentifier, id domain.PeerIden
 	}
 
 	client := r.Clients[string(deviceId)]
+	if client == nil {
+		return nil, fmt.Errorf("nullable client for %s", deviceId)
+	}
+
 	device, err := client.Device(string(deviceId))
 	if err != nil {
 		return nil, err
@@ -531,6 +571,10 @@ func (r *WgRepo) updatePeer(deviceId domain.InterfaceIdentifier, pp *domain.Phys
 	}
 
 	client := r.Clients[string(deviceId)]
+	if client == nil {
+		return fmt.Errorf("nullable client for %s", deviceId)
+	}
+
 	err := client.ConfigureDevice(string(deviceId), wgtypes.Config{ReplacePeers: false, Peers: []wgtypes.PeerConfig{cfg}})
 	if err != nil {
 		return err
@@ -561,6 +605,10 @@ func (r *WgRepo) deletePeer(deviceId domain.InterfaceIdentifier, id domain.PeerI
 	}
 
 	client := r.Clients[string(deviceId)]
+	if client == nil {
+		return fmt.Errorf("nullable client for %s", deviceId)
+	}
+
 	err := client.ConfigureDevice(string(deviceId), wgtypes.Config{ReplacePeers: false, Peers: []wgtypes.PeerConfig{cfg}})
 	if err != nil {
 		return err

@@ -168,7 +168,7 @@ type PeerInterfaceConfig struct {
 	AdvancedSecurity *AdvancedSecurity `gorm:"serializer:json"`
 }
 
-func (p *PeerInterfaceConfig) HasAdvancesSecurity() bool {
+func (p *PeerInterfaceConfig) HasAdvancedSecurity() bool {
 	return p.AdvancedSecurity != nil
 }
 

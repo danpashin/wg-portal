@@ -41,6 +41,14 @@ github.com/danpashin/wgctrl v0.0.0-20240325172530-900048347eb5 h1:rF8P04h7MrC1F/
 github.com/danpashin/wgctrl v0.0.0-20240325172530-900048347eb5/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
 github.com/danpashin/wgctrl v0.0.0-20250707061211-f49ee3769bb6 h1:FtQPsmuEvftUIciaFpHFhW8aY9TlZGWTCADKEagWiUI=
 github.com/danpashin/wgctrl v0.0.0-20250707061211-f49ee3769bb6/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
+github.com/danpashin/wgctrl v0.0.0-20251030064218-7ccca4ba3fe5 h1:M0a2TifV9yfM4ZvNgh5tU8+/1zS/oaSHbjTdlqKvzR4=
+github.com/danpashin/wgctrl v0.0.0-20251030064218-7ccca4ba3fe5/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
+github.com/danpashin/wgctrl v0.0.0-20251030104707-56dbff77eba8 h1:Zrstk/XuEoZHZb5e95Ne/0qdullpsGBBAunKg8DUrLc=
+github.com/danpashin/wgctrl v0.0.0-20251030104707-56dbff77eba8/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
+github.com/danpashin/wgctrl v0.0.0-20251030105614-69ce89e886ad h1:ZiutdJT5c1tQjbYAffESFBjqtKMZ+ve3saOLY6ZQ5I4=
+github.com/danpashin/wgctrl v0.0.0-20251030105614-69ce89e886ad/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
+github.com/danpashin/wgctrl v0.0.0-20251030105855-afe4b74f5dc6 h1:Snpe0n9prP9ILmwkGYhTMJPHZq/ePCcoHJAaCVXz+Qk=
+github.com/danpashin/wgctrl v0.0.0-20251030105855-afe4b74f5dc6/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

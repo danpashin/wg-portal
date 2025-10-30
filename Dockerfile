@@ -66,4 +66,4 @@ EXPOSE 51820/udp
 # the database and config file can be mounted from the host
 VOLUME [ "/app/data", "/app/config" ]
 # Command to run the executable
-ENTRYPOINT [ "/app/wg-portal" ]
+CMD [ "/app/wg-portal" ]

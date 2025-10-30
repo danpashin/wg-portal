@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -232,15 +233,25 @@ func migrateV1Interfaces(oldDb, newDb *gorm.DB) error {
 
 		if oldDevice.AdvancedSecurity != nil {
 			newInterface.AdvancedSecurity = &domain.AdvancedSecurity{
-				JunkPacketCount:            oldDevice.AdvancedSecurity.JunkPacketCount,
-				JunkPacketMinSize:          oldDevice.AdvancedSecurity.JunkPacketMinSize,
-				JunkPacketMaxSize:          oldDevice.AdvancedSecurity.JunkPacketMaxSize,
-				InitPacketJunkSize:         oldDevice.AdvancedSecurity.InitPacketJunkSize,
-				ResponsePacketJunkSize:     oldDevice.AdvancedSecurity.ResponsePacketJunkSize,
-				InitPacketMagicHeader:      oldDevice.AdvancedSecurity.InitPacketMagicHeader,
-				ResponsePacketMagicHeader:  oldDevice.AdvancedSecurity.ResponsePacketMagicHeader,
-				UnderloadPacketMagicHeader: oldDevice.AdvancedSecurity.UnderloadPacketMagicHeader,
-				TransportPacketMagicHeader: oldDevice.AdvancedSecurity.TransportPacketMagicHeader,
+				JunkPacketCount:   oldDevice.AdvancedSecurity.JunkPacketCount,
+				JunkPacketMinSize: oldDevice.AdvancedSecurity.JunkPacketMinSize,
+				JunkPacketMaxSize: oldDevice.AdvancedSecurity.JunkPacketMaxSize,
+
+				InitPacketJunkSize:        oldDevice.AdvancedSecurity.InitPacketJunkSize,
+				ResponsePacketJunkSize:    oldDevice.AdvancedSecurity.ResponsePacketJunkSize,
+				CookieReplyPacketJunkSize: 0,
+				TransportPacketJunkSize:   0,
+
+				InitPacketMagicHeader:      strconv.Itoa(int(oldDevice.AdvancedSecurity.InitPacketMagicHeader)),
+				ResponsePacketMagicHeader:  strconv.Itoa(int(oldDevice.AdvancedSecurity.ResponsePacketMagicHeader)),
+				UnderloadPacketMagicHeader: strconv.Itoa(int(oldDevice.AdvancedSecurity.UnderloadPacketMagicHeader)),
+				TransportPacketMagicHeader: strconv.Itoa(int(oldDevice.AdvancedSecurity.TransportPacketMagicHeader)),
+
+				FirstSpecialJunkPacket:  nil,
+				SecondSpecialJunkPacket: nil,
+				ThirdSpecialJunkPacket:  nil,
+				FourthSpecialJunkPacket: nil,
+				FifthSpecialJunkPacket:  nil,
 			}
 		}
 

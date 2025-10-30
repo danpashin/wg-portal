@@ -2,7 +2,6 @@ package domain
 
 import (
 	"fmt"
-	"github.com/danpashin/wgctrl/wgtypes"
 	"log/slog"
 	"math"
 	"net"
@@ -10,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/danpashin/wgctrl/wgtypes"
 
 	"github.com/h44z/wg-portal/internal"
 )
@@ -26,15 +27,25 @@ type InterfaceIdentifier string
 type InterfaceType string
 
 type AdvancedSecurity struct {
-	JunkPacketCount            uint16 `json:"jc"`
-	JunkPacketMinSize          uint16 `json:"jmin"`
-	JunkPacketMaxSize          uint16 `json:"jmax"`
-	InitPacketJunkSize         uint16 `json:"s1"`
-	ResponsePacketJunkSize     uint16 `json:"s2"`
-	InitPacketMagicHeader      uint32 `json:"h1" binding:"gte=5"`
-	ResponsePacketMagicHeader  uint32 `json:"h2" binding:"gte=5"`
-	UnderloadPacketMagicHeader uint32 `json:"h3" binding:"gte=5"`
-	TransportPacketMagicHeader uint32 `json:"h4" binding:"gte=5"`
+	JunkPacketCount   uint16 `json:"jc"`
+	JunkPacketMinSize uint16 `json:"jmin"`
+	JunkPacketMaxSize uint16 `json:"jmax"`
+
+	InitPacketJunkSize        uint16 `json:"s1"`
+	ResponsePacketJunkSize    uint16 `json:"s2"`
+	CookieReplyPacketJunkSize uint16 `json:"s3"`
+	TransportPacketJunkSize   uint16 `json:"s4"`
+
+	InitPacketMagicHeader      string `json:"h1"`
+	ResponsePacketMagicHeader  string `json:"h2"`
+	UnderloadPacketMagicHeader string `json:"h3"`
+	TransportPacketMagicHeader string `json:"h4"`
+
+	FirstSpecialJunkPacket  *string `json:"i1"`
+	SecondSpecialJunkPacket *string `json:"i2"`
+	ThirdSpecialJunkPacket  *string `json:"i3"`
+	FourthSpecialJunkPacket *string `json:"i4"`
+	FifthSpecialJunkPacket  *string `json:"i5"`
 }
 
 type Interface struct {

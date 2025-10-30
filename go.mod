@@ -6,7 +6,7 @@ require (
 	github.com/a8m/envsubst v1.4.3
 	github.com/alexedwards/scs/v2 v2.8.0
 	github.com/coreos/go-oidc/v3 v3.14.1
-	github.com/danpashin/wgctrl v0.0.0-20250707061211-f49ee3769bb6
+	github.com/danpashin/wgctrl v0.0.0-20251030105855-afe4b74f5dc6
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-ldap/ldap/v3 v3.4.11
 	github.com/go-pkgz/routegroup v1.4.1
@@ -24,7 +24,6 @@ require (
 	golang.org/x/crypto v0.38.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sys v0.33.0
-	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.11

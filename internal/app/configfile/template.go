@@ -22,6 +22,13 @@ type TemplateHandler struct {
 func newTemplateHandler() (*TemplateHandler, error) {
 	tplFuncs := template.FuncMap{
 		"CidrsToString": domain.CidrsToString,
+		"IsAwgString": func(val *string) bool {
+			if val == nil {
+				return false
+			}
+
+			return len(*val) > 0
+		},
 	}
 
 	templateCache, err := template.New("WireGuard").Funcs(tplFuncs).ParseFS(TemplateFiles, "tpl_files/*.tpl")

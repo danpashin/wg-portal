@@ -437,47 +437,76 @@ async function del() {
           <fieldset v-if="formData.UsesAdvancedSecurity">
             <legend class="mt-4">{{ $t('modals.interface-edit.header-awg-mode') }}</legend>
             <div class="row">
-              <div class="form-group col-md-12">
-                <label class="form-label mt-4">Junk Packet Count (JC)</label>
+              <p class="lead mb-0">Junk settings</p>
+              <div class="form-group col-md-12 mt-2">
+                <label class="form-label">Junk Packet Count (JC)</label>
                 <input v-model.number="formData.AdvancedSecurity.jc" type="number" class="form-control" required>
               </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Junk Packet Min Size (JMin)</label>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Junk Packet Min Size (JMin)</label>
                 <input v-model.number="formData.AdvancedSecurity.jmin" type="number" class="form-control" required>
               </div>
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Junk Packet Max Size (JMax)</label>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Junk Packet Max Size (JMax)</label>
                 <input v-model.number="formData.AdvancedSecurity.jmax" type="number" class="form-control" required>
               </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Init Packet Junk Size (S1)</label>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Init Packet Junk Size (S1)</label>
                 <input v-model.number="formData.AdvancedSecurity.s1" type="number" class="form-control" required>
               </div>
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Response Packet Junk Size (S2)</label>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Response Packet Junk Size (S2)</label>
                 <input v-model.number="formData.AdvancedSecurity.s2" type="number" class="form-control" required>
               </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Cookie Reply Packet Junk Size (S3)</label>
+                <input v-model.number="formData.AdvancedSecurity.s3" type="number" class="form-control">
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Transport Packet Junk Size (S4)</label>
+                <input v-model.number="formData.AdvancedSecurity.s4" type="number" class="form-control">
+              </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Init Packet Magic Header (H1)</label>
-                <input v-model.number="formData.AdvancedSecurity.h1" type="number" class="form-control" required>
+            <div class="row mt-3">
+              <p class="lead mb-0">Data magic</p>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Init Packet Magic Header (H1)</label>
+                <input v-model="formData.AdvancedSecurity.h1" class="form-control" required>
               </div>
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Response Packet Magic Header (H2)</label>
-                <input v-model.number="formData.AdvancedSecurity.h2" type="number" class="form-control" required>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Response Packet Magic Header (H2)</label>
+                <input v-model="formData.AdvancedSecurity.h2" class="form-control" required>
               </div>
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Underload Packet Magic Header (H3)</label>
-                <input v-model.number="formData.AdvancedSecurity.h3" type="number" class="form-control" required>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Underload Packet Magic Header (H3)</label>
+                <input v-model="formData.AdvancedSecurity.h3" class="form-control" required>
               </div>
-              <div class="form-group col-md-6">
-                <label class="form-label mt-4">Transport Packet Magic Header (H4)</label>
-                <input v-model.number="formData.AdvancedSecurity.h4" type="number" class="form-control" required>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Transport Packet Magic Header (H4)</label>
+                <input v-model="formData.AdvancedSecurity.h4"  class="form-control" required>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <p class="lead mb-0">Custom Junk</p>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">First Special Junk Packet (I1)</label>
+                <input v-model="formData.AdvancedSecurity.i1" class="form-control">
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Second Special Junk Packet (I2)</label>
+                <input v-model="formData.AdvancedSecurity.i2" class="form-control">
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Third Special Junk Packet (I3)</label>
+                <input v-model="formData.AdvancedSecurity.i3" class="form-control">
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Fourth Special Junk Packet (I4)</label>
+                <input v-model="formData.AdvancedSecurity.i4" class="form-control">
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Fifth Special Junk Packet (I5)</label>
+                <input v-model="formData.AdvancedSecurity.i5" class="form-control">
               </div>
             </div>
           </fieldset>

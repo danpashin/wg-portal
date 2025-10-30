@@ -122,7 +122,7 @@ func NewPeers(src []domain.Peer) []Peer {
 	return results
 }
 
-func NewDomainPeer(src *Peer, iface *domain.Interface) *domain.Peer {
+func NewDomainPeer(src *Peer) *domain.Peer {
 	now := time.Now()
 
 	cidrs, _ := domain.CidrsFromArray(src.Addresses)

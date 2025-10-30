@@ -473,6 +473,10 @@ func (m Manager) getRoutingTableAndFwMark(iface *domain.Interface, link netlink.
 
 func (m Manager) setFwMark(id domain.InterfaceIdentifier, fwmark int) error {
 	client := m.wgRepo.Clients[string(id)]
+	if client == nil {
+		return fmt.Errorf("no client found for %s", id)
+	}
+
 	err := client.ConfigureDevice(string(id), wgtypes.Config{
 		FirewallMark: &fwmark,
 	})
