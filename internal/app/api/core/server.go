@@ -100,6 +100,7 @@ func (s *Server) Run(ctx context.Context, listenAddress string) {
 	srvContext, cancelFn := context.WithCancel(ctx)
 	go func() {
 		var err error
+		slog.Debug("starting server", "certFile", s.cfg.Web.CertFile, "keyFile", s.cfg.Web.KeyFile)
 		if s.cfg.Web.CertFile != "" && s.cfg.Web.KeyFile != "" {
 			err = srv.ListenAndServeTLS(s.cfg.Web.CertFile, s.cfg.Web.KeyFile)
 		} else {
@@ -138,7 +139,8 @@ func (s *Server) setupRoutes(endpoints ...ApiEndpointSetupFunc) {
 			s.versions[version].HandleFunc("GET /swagger/index.html", s.rapiDocHandler(version)) // Deprecated: old link
 			s.versions[version].HandleFunc("GET /doc.html", s.rapiDocHandler(version))
 
-			groupSetupFn(s.versions[version])
+			versionGroup := s.versions[version].Group()
+			groupSetupFn(versionGroup)
 		}
 	}
 }

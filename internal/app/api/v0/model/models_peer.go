@@ -43,6 +43,7 @@ type Peer struct {
 	Identifier          string     `json:"Identifier" example:"super_nice_peer"` // peer unique identifier
 	DisplayName         string     `json:"DisplayName"`                          // a nice display name/ description for the peer
 	UserIdentifier      string     `json:"UserIdentifier"`                       // the owner
+	UserDisplayName     string     `json:"UserDisplayName"`                      // the owner display name
 	InterfaceIdentifier string     `json:"InterfaceIdentifier"`                  // the interface id
 	Disabled            bool       `json:"Disabled"`                             // flag that specifies if the peer is enabled (up) or not (down)
 	DisabledReason      string     `json:"DisabledReason"`                       // the reason why the peer has been disabled
@@ -80,7 +81,7 @@ type Peer struct {
 }
 
 func NewPeer(src *domain.Peer) *Peer {
-	return &Peer{
+	p := &Peer{
 		Identifier:          string(src.Identifier),
 		DisplayName:         src.DisplayName,
 		UserIdentifier:      string(src.UserIdentifier),
@@ -111,6 +112,12 @@ func NewPeer(src *domain.Peer) *Peer {
 		PostDown:            ConfigOptionFromDomain(src.Interface.PostDown),
 		Filename:            src.GetConfigFileName(),
 	}
+
+	if src.User != nil {
+		p.UserDisplayName = src.User.DisplayName()
+	}
+
+	return p
 }
 
 func NewPeers(src []domain.Peer) []Peer {
@@ -172,13 +179,13 @@ func NewDomainPeer(src *Peer) *domain.Peer {
 
 type MultiPeerRequest struct {
 	Identifiers []string `json:"Identifiers"`
-	Suffix      string   `json:"Suffix"`
+	Prefix      string   `json:"Prefix"`
 }
 
 func NewDomainPeerCreationRequest(src *MultiPeerRequest) *domain.PeerCreationRequest {
 	return &domain.PeerCreationRequest{
 		UserIdentifiers: src.Identifiers,
-		Suffix:          src.Suffix,
+		Prefix:          src.Prefix,
 	}
 }
 
@@ -198,7 +205,7 @@ func NewPeerStats(enabled bool, src []domain.PeerStatus) *PeerStats {
 
 	for _, srcStat := range src {
 		stats[string(srcStat.PeerId)] = PeerStatData{
-			IsConnected:      srcStat.IsConnected(),
+			IsConnected:      srcStat.IsConnected,
 			IsPingable:       srcStat.IsPingable,
 			LastPing:         srcStat.LastPing,
 			BytesReceived:    srcStat.BytesReceived,

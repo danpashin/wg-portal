@@ -5,6 +5,7 @@ export function freshInterface() {
     DisplayName: "",
     Identifier: "",
     Mode: "server",
+    Backend: "local",
 
     PublicKey: "",
     PrivateKey: "",
@@ -71,6 +72,7 @@ export function freshPeer() {
     Identifier: "",
     DisplayName: "",
     UserIdentifier: "",
+    UserDisplayName: "",
     InterfaceIdentifier: "",
     Disabled: false,
     ExpiresAt: null,

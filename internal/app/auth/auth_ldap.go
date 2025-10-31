@@ -54,7 +54,7 @@ func (l LdapAuthenticator) PlaintextAuthentication(userId domain.UserIdentifier,
 
 	attrs := []string{"dn"}
 
-	loginFilter := strings.Replace(l.cfg.LoginFilter, "{{login_identifier}}", string(userId), -1)
+	loginFilter := strings.Replace(l.cfg.LoginFilter, "{{login_identifier}}", ldap.EscapeFilter(string(userId)), -1)
 	searchRequest := ldap.NewSearchRequest(
 		l.cfg.BaseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 20, false, // 20 second time limit
@@ -100,7 +100,7 @@ func (l LdapAuthenticator) GetUserInfo(_ context.Context, userId domain.UserIden
 
 	attrs := internal.LdapSearchAttributes(&l.cfg.FieldMap)
 
-	loginFilter := strings.Replace(l.cfg.LoginFilter, "{{login_identifier}}", string(userId), -1)
+	loginFilter := strings.Replace(l.cfg.LoginFilter, "{{login_identifier}}", ldap.EscapeFilter(string(userId)), -1)
 	searchRequest := ldap.NewSearchRequest(
 		l.cfg.BaseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 20, false, // 20 second time limit
@@ -113,10 +113,13 @@ func (l LdapAuthenticator) GetUserInfo(_ context.Context, userId domain.UserIden
 	}
 
 	if len(sr.Entries) == 0 {
+		slog.Debug("LDAP user not found", "source", l.GetName(), "userId", userId, "filter", loginFilter)
 		return nil, domain.ErrNotFound
 	}
 
 	if len(sr.Entries) > 1 {
+		slog.Debug("LDAP user not unique",
+			"source", l.GetName(), "userId", userId, "filter", loginFilter, "entries", len(sr.Entries))
 		return nil, domain.ErrNotUnique
 	}
 
