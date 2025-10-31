@@ -118,8 +118,6 @@ func (m Manager) PreparePeer(ctx context.Context, id domain.InterfaceIdentifier)
 		peerMode = domain.InterfaceTypeServer
 	}
 
-	fmt.Println(iface.AdvancedSecurity)
-
 	peerId := domain.PeerIdentifier(kp.PublicKey)
 	freshPeer := &domain.Peer{
 		BaseModel: domain.BaseModel{
@@ -470,6 +468,7 @@ func (m Manager) savePeers(ctx context.Context, peers ...*domain.Peer) error {
 		// The backend will handle the disabled state appropriately
 		err := m.db.SavePeer(ctx, peer.Identifier, func(p *domain.Peer) (*domain.Peer, error) {
 			peer.CopyCalculatedAttributes(p)
+			peer.Interface.AdvancedSecurity = iface.AdvancedSecurity
 
 			err := m.wg.GetController(iface).SavePeer(ctx, peer.InterfaceIdentifier, peer.Identifier,
 				func(pp *domain.PhysicalPeer) (*domain.PhysicalPeer, error) {
