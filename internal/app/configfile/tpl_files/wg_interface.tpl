@@ -59,16 +59,16 @@ H4 = {{$advSec.TransportPacketMagicHeader}}
 I1 = {{ $advSec.FirstSpecialJunkPacket }}
 {{- end}}
 {{- if IsAwgString $advSec.SecondSpecialJunkPacket}}
-I1 = {{ $advSec.SecondSpecialJunkPacket }}
+I2 = {{ $advSec.SecondSpecialJunkPacket }}
 {{- end}}
 {{- if IsAwgString $advSec.ThirdSpecialJunkPacket}}
-I1 = {{ $advSec.ThirdSpecialJunkPacket }}
+I3 = {{ $advSec.ThirdSpecialJunkPacket }}
 {{- end}}
 {{- if IsAwgString $advSec.FourthSpecialJunkPacket}}
-I1 = {{ $advSec.FourthSpecialJunkPacket }}
+I4 = {{ $advSec.FourthSpecialJunkPacket }}
 {{- end}}
 {{- if IsAwgString $advSec.FifthSpecialJunkPacket}}
-I1 = {{ $advSec.FifthSpecialJunkPacket }}
+I5 = {{ $advSec.FifthSpecialJunkPacket }}
 {{- end}}
 
 ###############################
