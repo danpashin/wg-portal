@@ -38,7 +38,7 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/danpashin/wgctrl v0.0.0-20251031073924-7399cd4e354c // indirect
+	github.com/danpashin/wgctrl v0.0.0-20251115063236-686b819a244b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect

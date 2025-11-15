@@ -25,6 +25,7 @@ type WgRepo struct {
 // NewWireGuardRepository creates a new WgRepo instance.
 // This repository is used to interact with the WireGuard/AmneziaWG kernel or userspace module.
 func NewWireGuardRepository() (*WgRepo, error) {
+	log := slog.Default().With(slog.String("adapter", "wireguard"))
 	clientTypes := []wgtypes.ClientType{
 		wgtypes.NativeClient,
 		wgtypes.AmneziaClient,
@@ -50,7 +51,11 @@ func NewWireGuardRepository() (*WgRepo, error) {
 	}
 
 	if len(clients) == 0 {
-		return nil, fmt.Errorf("no wg-compatible clients available")
+		log.Error("no compatible clients available")
+	}
+
+	for deviceName, client := range clients {
+		log.Info("got client", "deviceName", deviceName, "type", client.Type().String())
 	}
 
 	nl := &lowlevel.NetlinkManager{}
@@ -58,8 +63,7 @@ func NewWireGuardRepository() (*WgRepo, error) {
 	repo := &WgRepo{
 		Clients: clients,
 		nl:      nl,
-
-		log: slog.Default().With(slog.String("adapter", "wireguard")),
+		log:     log,
 	}
 
 	return repo, nil

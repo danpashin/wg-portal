@@ -43,6 +43,8 @@ github.com/coreos/go-oidc/v3 v3.16.0/go.mod h1:wqPbKFrVnE90vty060SB40FCJ8fTHTxSw
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/danpashin/wgctrl v0.0.0-20251031073924-7399cd4e354c h1:8ez/StAeRnJQuZcudLQxbpZSeSiI9uIEZvMmsbtEl/E=
 github.com/danpashin/wgctrl v0.0.0-20251031073924-7399cd4e354c/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
+github.com/danpashin/wgctrl v0.0.0-20251115063236-686b819a244b h1:xRqweD9vzFl8YOTXuBfsYeRSLUv5+bRNcp+aFAYfV2Y=
+github.com/danpashin/wgctrl v0.0.0-20251115063236-686b819a244b/go.mod h1:UYoXi8XnEQgvGomdInM6iWE0ETJOmPlyB7GMPOdlso0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
