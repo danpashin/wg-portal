@@ -4,6 +4,7 @@ export function freshInterface() {
     Disabled: false,
     DisplayName: "",
     Identifier: "",
+    CreateDefaultPeer: false,
     Mode: "server",
     Backend: "local",
 
@@ -155,7 +156,7 @@ export function freshUser() {
     Identifier: "",
 
     Email: "",
-    Source: "db",
+    AuthSources: ["db"],
     IsAdmin: false,
 
     Firstname: "",
@@ -172,6 +173,8 @@ export function freshUser() {
     LockedReason: "",
 
     ApiEnabled: false,
+
+    PersistLocalChanges: false,
 
     PeerCount: 0,
 
