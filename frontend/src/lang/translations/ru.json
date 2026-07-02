@@ -488,6 +488,7 @@
       },
       "header-awg-mode": "Режим AmneziaWG",
       "button-apply-defaults": "Применить настройки пира по умолчанию",
+      "button-create-default-peers": "Создать пиров по умолчанию",
       "confirm-delete": "Вы уверены, что хотите удалить интерфейс «{id}»?"
     },
     "peer-view": {

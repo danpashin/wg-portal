@@ -507,6 +507,7 @@
       },
       "header-awg-mode": "AmneziaWG Mode",
       "button-apply-defaults": "Apply Peer Defaults",
+      "button-create-default-peers": "Create Default Peers",
       "confirm-delete": "Are you sure you want to delete interface '{id}'?"
     },
     "peer-view": {
