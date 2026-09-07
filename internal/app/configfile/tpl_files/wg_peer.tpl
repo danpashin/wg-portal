@@ -56,11 +56,17 @@ S3 = {{$advSec.CookieReplyPacketJunkSize}}
 S4 = {{ $advSec.TransportPacketJunkSize }}
 {{- end}}
 
-# Wireguard payload boundaries
+# Payload encryption
 H1 = {{$advSec.InitPacketMagicHeader}}
 H2 = {{$advSec.ResponsePacketMagicHeader}}
 H3 = {{$advSec.UnderloadPacketMagicHeader}}
 H4 = {{$advSec.TransportPacketMagicHeader}}
+{{- if IsAwgString $advSec.HeaderProtectionKey}}
+HeaderProtectionKey = {{ $advSec.HeaderProtectionKey }}
+{{- end}}
+{{- if IsAwgString $advSec.ContentPaddingAddition}}
+ContentPaddingAddition = {{ $advSec.ContentPaddingAddition }}
+{{- end}}
 
 # Custom junk settings
 {{- if IsAwgString $advSec.FirstSpecialJunkPacket}}
@@ -77,6 +83,31 @@ I4 = {{ $advSec.FourthSpecialJunkPacket }}
 {{- end}}
 {{- if IsAwgString $advSec.FifthSpecialJunkPacket}}
 I5 = {{ $advSec.FifthSpecialJunkPacket }}
+{{- end}}
+
+# Timing settings
+{{- if IsAwgString $advSec.RekeyAfterTime}}
+RekeyAfterTime = {{ $advSec.RekeyAfterTime }}
+{{- end}}
+{{- if IsAwgString $advSec.RekeyTimeout}}
+RekeyTimeout = {{ $advSec.RekeyTimeout }}
+{{- end}}
+{{- if IsAwgString $advSec.RejectAfterTime}}
+RejectAfterTime = {{ $advSec.RejectAfterTime }}
+{{- end}}
+{{- if IsAwgString $advSec.KeepaliveTimeout}}
+KeepaliveTimeout = {{ $advSec.KeepaliveTimeout }}
+{{- end}}
+{{- if IsAwgString $advSec.HandshakeAttemptsLimit}}
+MaxHandshakeAttempts = {{ $advSec.HandshakeAttemptsLimit }}
+{{- end}}
+
+# Misc
+{{- if $advSec.RandomTrailers}}
+RandomTrailers = on
+{{- end}}
+{{- if $advSec.DisableCookies}}
+RandomTrailers = on
 {{- end}}
 
 ###############################

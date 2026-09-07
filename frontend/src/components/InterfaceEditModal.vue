@@ -618,6 +618,60 @@ async function del() {
                 <input v-model="formData.AdvancedSecurity.i5" class="form-control">
               </div>
             </div>
+            <div class="row mt-3">
+              <p class="lead mb-0">Header Protection</p>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Encryption Key</label>
+                <input v-model="formData.AdvancedSecurity.header_protection_key" class="form-control">
+                <small class="form-text text-muted">Key for Header Protection</small>
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Content Padding</label>
+                <input v-model="formData.AdvancedSecurity.content_padding_addition" class="form-control">
+                <small class="form-text text-muted">Random addition to the transport payload</small>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <p class="lead mb-0">Limits</p>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Rekey After Seconds</label>
+                <input v-model="formData.AdvancedSecurity.rekey_after_time" class="form-control">
+                <small class="form-text text-muted">Interval before re-handshake</small>
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Rekey Timeout</label>
+                <input v-model="formData.AdvancedSecurity.rekey_timeout" class="form-control">
+                <small class="form-text text-muted">Handshake timeout</small>
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Reject After Seconds</label>
+                <input v-model="formData.AdvancedSecurity.reject_after_time" class="form-control">
+                <small class="form-text text-muted">Interval after which the connection initiates a new handshake if no data is received</small>
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Keepalive Timeout</label>
+                <input v-model="formData.AdvancedSecurity.keepalive_timeout" class="form-control">
+                <small class="form-text text-muted">Interval before sending keepalive</small>
+              </div>
+              <div class="form-group col-md-6 mt-2">
+                <label class="form-label">Handshake Attempts Limit</label>
+                <input v-model="formData.AdvancedSecurity.handshake_attempts_limit" class="form-control">
+                <small class="form-text text-muted">Maximum number of handshake retries</small>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <p class="lead mb-0">Misc</p>
+              <div class="form-check form-switch col-md-6 mt-2">
+                <label class="form-label">Random Trailers</label>
+                <input v-model="formData.AdvancedSecurity.random_trailers" class="form-check-input" type="checkbox">
+                <small class="d-block form-text text-muted">RandomTrailers adds a random number of bytes to the end of packets. For handshake packets, random data is added; for transport packets, zeroes are added to the end of the internal IP packet.</small>
+              </div>
+              <div class="form-check form-switch col-md-6 mt-2">
+                <label class="form-label">Disable Cookies</label>
+                <input v-model="formData.AdvancedSecurity.disable_cookies" class="form-check-input" type="checkbox">
+                <small class="d-block form-text text-muted">The DisableCookies parameter disables only the sending of Handshake Cookie Reply messages. Incoming cookie messages and other cookie-related mechanisms continue to work the same way as in the original WireGuard implementation.</small>
+              </div>
+            </div>
           </fieldset>
         </div>
         <div id="peerdefaults" class="tab-pane fade">

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"slices"
 
 	"github.com/danpashin/wgctrl"
 	"github.com/danpashin/wgctrl/wgtypes"
@@ -192,17 +193,45 @@ func (r *WgRepo) convertWireGuardInterface(clientType wgtypes.ClientType, device
 			CookieReplyPacketJunkSize: device.AdvancedSecurity.CookieReplyPacketJunkSize,
 			TransportPacketJunkSize:   device.AdvancedSecurity.TransportPacketJunkSize,
 
-			InitPacketMagicHeader:      device.AdvancedSecurity.InitPacketMagicHeader,
-			ResponsePacketMagicHeader:  device.AdvancedSecurity.ResponsePacketMagicHeader,
-			UnderloadPacketMagicHeader: device.AdvancedSecurity.UnderloadPacketMagicHeader,
-			TransportPacketMagicHeader: device.AdvancedSecurity.TransportPacketMagicHeader,
-
 			FirstSpecialJunkPacket:  device.AdvancedSecurity.FirstSpecialJunkPacket,
 			SecondSpecialJunkPacket: device.AdvancedSecurity.SecondSpecialJunkPacket,
 			ThirdSpecialJunkPacket:  device.AdvancedSecurity.ThirdSpecialJunkPacket,
 			FourthSpecialJunkPacket: device.AdvancedSecurity.FourthSpecialJunkPacket,
 			FifthSpecialJunkPacket:  device.AdvancedSecurity.FifthSpecialJunkPacket,
 		}
+
+		setStringFromRange32 := func(dest *string, r *wgtypes.Range32) {
+			if r != nil {
+				*dest = r.String()
+			}
+		}
+
+		setStringPtrFromRange16 := func(dest **string, r *wgtypes.Range16) {
+			if r != nil {
+				val := r.String()
+				*dest = &val
+			}
+		}
+
+		setStringFromRange32(&iface.AdvancedSecurity.InitPacketMagicHeader, device.AdvancedSecurity.InitPacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.ResponsePacketMagicHeader, device.AdvancedSecurity.ResponsePacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.UnderloadPacketMagicHeader, device.AdvancedSecurity.UnderloadPacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.TransportPacketMagicHeader, device.AdvancedSecurity.TransportPacketMagicHeader)
+
+		protKey := device.AdvancedSecurity.HeaderProtectionKey
+		if protKey != nil {
+			val := protKey.HexString()
+			iface.AdvancedSecurity.HeaderProtectionKey = &val
+		}
+
+		setStringPtrFromRange16(&iface.AdvancedSecurity.ContentPaddingAddition, device.AdvancedSecurity.ContentPaddingAddition)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RekeyAfterTime, device.AdvancedSecurity.RekeyAfterTime)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RekeyTimeout, device.AdvancedSecurity.RekeyTimeout)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RejectAfterTime, device.AdvancedSecurity.RejectAfterTime)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.KeepaliveTimeout, device.AdvancedSecurity.KeepaliveTimeout)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.HandshakeAttemptsLimit, device.AdvancedSecurity.HandshakeAttemptsLimit)
+		iface.AdvancedSecurity.RandomTrailers = device.AdvancedSecurity.RandomTrailers
+		iface.AdvancedSecurity.DisableCookies = device.AdvancedSecurity.DisableCookies
 	}
 
 	// read data from netlink interface
@@ -373,13 +402,7 @@ func (r *WgRepo) updateLowLevelInterface(pi *domain.PhysicalInterface) error {
 	}
 	for _, rawAddr := range rawAddresses {
 		netlinkAddr := domain.CidrFromNetlinkAddr(rawAddr)
-		remove := true
-		for _, addr := range pi.Addresses {
-			if addr == netlinkAddr {
-				remove = false
-				break
-			}
-		}
+		remove := !slices.Contains(pi.Addresses, netlinkAddr)
 
 		if !remove {
 			continue
@@ -435,16 +458,41 @@ func (r *WgRepo) updateWireGuardInterface(pi *domain.PhysicalInterface) error {
 		config.AdvancedSecurityConfig.CookieReplyPacketJunkSize = &advSec.CookieReplyPacketJunkSize
 		config.AdvancedSecurityConfig.TransportPacketJunkSize = &advSec.TransportPacketJunkSize
 
-		config.AdvancedSecurityConfig.InitPacketMagicHeader = &advSec.InitPacketMagicHeader
-		config.AdvancedSecurityConfig.ResponsePacketMagicHeader = &advSec.ResponsePacketMagicHeader
-		config.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &advSec.UnderloadPacketMagicHeader
-		config.AdvancedSecurityConfig.TransportPacketMagicHeader = &advSec.TransportPacketMagicHeader
+		config.AdvancedSecurityConfig.InitPacketMagicHeader = wgtypes.Range32FromString(advSec.InitPacketMagicHeader)
+		config.AdvancedSecurityConfig.ResponsePacketMagicHeader = wgtypes.Range32FromString(advSec.ResponsePacketMagicHeader)
+		config.AdvancedSecurityConfig.UnderloadPacketMagicHeader = wgtypes.Range32FromString(advSec.UnderloadPacketMagicHeader)
+		config.AdvancedSecurityConfig.TransportPacketMagicHeader = wgtypes.Range32FromString(advSec.TransportPacketMagicHeader)
 
 		config.AdvancedSecurityConfig.FirstSpecialJunkPacket = advSec.FirstSpecialJunkPacket
 		config.AdvancedSecurityConfig.SecondSpecialJunkPacket = advSec.SecondSpecialJunkPacket
 		config.AdvancedSecurityConfig.ThirdSpecialJunkPacket = advSec.ThirdSpecialJunkPacket
 		config.AdvancedSecurityConfig.FourthSpecialJunkPacket = advSec.FourthSpecialJunkPacket
 		config.AdvancedSecurityConfig.FifthSpecialJunkPacket = advSec.FifthSpecialJunkPacket
+
+		if advSec.HeaderProtectionKey != nil {
+			config.AdvancedSecurityConfig.HeaderProtectionKey, err = wgtypes.CryptKeyFromBase64(*advSec.HeaderProtectionKey)
+			if err != nil {
+				return err
+			}
+		} else {
+			config.AdvancedSecurityConfig.HeaderProtectionKey = nil
+		}
+
+		range16FromStringPtr := func(s *string) *wgtypes.Range16 {
+			if s == nil || len(*s) == 0 {
+				return wgtypes.Range16FromSingle(0)
+			}
+			return wgtypes.Range16FromString(*s)
+		}
+
+		config.AdvancedSecurityConfig.ContentPaddingAddition = range16FromStringPtr(advSec.ContentPaddingAddition)
+		config.AdvancedSecurityConfig.RekeyAfterTime = range16FromStringPtr(advSec.RekeyAfterTime)
+		config.AdvancedSecurityConfig.RekeyTimeout = range16FromStringPtr(advSec.RekeyTimeout)
+		config.AdvancedSecurityConfig.RejectAfterTime = range16FromStringPtr(advSec.RejectAfterTime)
+		config.AdvancedSecurityConfig.KeepaliveTimeout = range16FromStringPtr(advSec.KeepaliveTimeout)
+		config.AdvancedSecurityConfig.HandshakeAttemptsLimit = range16FromStringPtr(advSec.HandshakeAttemptsLimit)
+		config.AdvancedSecurityConfig.RandomTrailers = &advSec.RandomTrailers
+		config.AdvancedSecurityConfig.DisableCookies = &advSec.DisableCookies
 	}
 
 	client := r.Clients[string(pi.Identifier)]

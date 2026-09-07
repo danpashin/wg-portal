@@ -23,7 +23,7 @@ func newTemplateHandler() (*TemplateHandler, error) {
 	tplFuncs := template.FuncMap{
 		"CidrsToString": domain.CidrsToString,
 		"IsAwgString": func(val *string) bool {
-			if val == nil {
+			if val == nil || *val == "0" {
 				return false
 			}
 

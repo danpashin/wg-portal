@@ -180,17 +180,45 @@ func (c LocalController) convertWireGuardInterface(clientType wgtypes.ClientType
 			CookieReplyPacketJunkSize: device.AdvancedSecurity.CookieReplyPacketJunkSize,
 			TransportPacketJunkSize:   device.AdvancedSecurity.TransportPacketJunkSize,
 
-			InitPacketMagicHeader:      device.AdvancedSecurity.InitPacketMagicHeader,
-			ResponsePacketMagicHeader:  device.AdvancedSecurity.ResponsePacketMagicHeader,
-			UnderloadPacketMagicHeader: device.AdvancedSecurity.UnderloadPacketMagicHeader,
-			TransportPacketMagicHeader: device.AdvancedSecurity.TransportPacketMagicHeader,
-
 			FirstSpecialJunkPacket:  device.AdvancedSecurity.FirstSpecialJunkPacket,
 			SecondSpecialJunkPacket: device.AdvancedSecurity.SecondSpecialJunkPacket,
 			ThirdSpecialJunkPacket:  device.AdvancedSecurity.ThirdSpecialJunkPacket,
 			FourthSpecialJunkPacket: device.AdvancedSecurity.FourthSpecialJunkPacket,
 			FifthSpecialJunkPacket:  device.AdvancedSecurity.FifthSpecialJunkPacket,
 		}
+
+		setStringFromRange32 := func(dest *string, r *wgtypes.Range32) {
+			if r != nil {
+				*dest = r.String()
+			}
+		}
+
+		setStringPtrFromRange16 := func(dest **string, r *wgtypes.Range16) {
+			if r != nil {
+				val := r.String()
+				*dest = &val
+			}
+		}
+
+		setStringFromRange32(&iface.AdvancedSecurity.InitPacketMagicHeader, device.AdvancedSecurity.InitPacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.ResponsePacketMagicHeader, device.AdvancedSecurity.ResponsePacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.UnderloadPacketMagicHeader, device.AdvancedSecurity.UnderloadPacketMagicHeader)
+		setStringFromRange32(&iface.AdvancedSecurity.TransportPacketMagicHeader, device.AdvancedSecurity.TransportPacketMagicHeader)
+
+		protKey := device.AdvancedSecurity.HeaderProtectionKey
+		if protKey != nil {
+			val := protKey.HexString()
+			iface.AdvancedSecurity.HeaderProtectionKey = &val
+		}
+
+		setStringPtrFromRange16(&iface.AdvancedSecurity.ContentPaddingAddition, device.AdvancedSecurity.ContentPaddingAddition)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RekeyAfterTime, device.AdvancedSecurity.RekeyAfterTime)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RekeyTimeout, device.AdvancedSecurity.RekeyTimeout)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.RejectAfterTime, device.AdvancedSecurity.RejectAfterTime)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.KeepaliveTimeout, device.AdvancedSecurity.KeepaliveTimeout)
+		setStringPtrFromRange16(&iface.AdvancedSecurity.HandshakeAttemptsLimit, device.AdvancedSecurity.HandshakeAttemptsLimit)
+		iface.AdvancedSecurity.RandomTrailers = device.AdvancedSecurity.RandomTrailers
+		iface.AdvancedSecurity.DisableCookies = device.AdvancedSecurity.DisableCookies
 	}
 
 	// read data from netlink interface
@@ -440,16 +468,41 @@ func (c LocalController) updateWireGuardInterface(pi *domain.PhysicalInterface) 
 		ifaceConfig.AdvancedSecurityConfig.CookieReplyPacketJunkSize = &advSec.CookieReplyPacketJunkSize
 		ifaceConfig.AdvancedSecurityConfig.TransportPacketJunkSize = &advSec.TransportPacketJunkSize
 
-		ifaceConfig.AdvancedSecurityConfig.InitPacketMagicHeader = &advSec.InitPacketMagicHeader
-		ifaceConfig.AdvancedSecurityConfig.ResponsePacketMagicHeader = &advSec.ResponsePacketMagicHeader
-		ifaceConfig.AdvancedSecurityConfig.UnderloadPacketMagicHeader = &advSec.UnderloadPacketMagicHeader
-		ifaceConfig.AdvancedSecurityConfig.TransportPacketMagicHeader = &advSec.TransportPacketMagicHeader
+		ifaceConfig.AdvancedSecurityConfig.InitPacketMagicHeader = wgtypes.Range32FromString(advSec.InitPacketMagicHeader)
+		ifaceConfig.AdvancedSecurityConfig.ResponsePacketMagicHeader = wgtypes.Range32FromString(advSec.ResponsePacketMagicHeader)
+		ifaceConfig.AdvancedSecurityConfig.UnderloadPacketMagicHeader = wgtypes.Range32FromString(advSec.UnderloadPacketMagicHeader)
+		ifaceConfig.AdvancedSecurityConfig.TransportPacketMagicHeader = wgtypes.Range32FromString(advSec.TransportPacketMagicHeader)
 
 		ifaceConfig.AdvancedSecurityConfig.FirstSpecialJunkPacket = advSec.FirstSpecialJunkPacket
 		ifaceConfig.AdvancedSecurityConfig.SecondSpecialJunkPacket = advSec.SecondSpecialJunkPacket
 		ifaceConfig.AdvancedSecurityConfig.ThirdSpecialJunkPacket = advSec.ThirdSpecialJunkPacket
 		ifaceConfig.AdvancedSecurityConfig.FourthSpecialJunkPacket = advSec.FourthSpecialJunkPacket
 		ifaceConfig.AdvancedSecurityConfig.FifthSpecialJunkPacket = advSec.FifthSpecialJunkPacket
+
+		if advSec.HeaderProtectionKey != nil {
+			ifaceConfig.AdvancedSecurityConfig.HeaderProtectionKey, err = wgtypes.CryptKeyFromBase64(*advSec.HeaderProtectionKey)
+			if err != nil {
+				return err
+			}
+		} else {
+			ifaceConfig.AdvancedSecurityConfig.HeaderProtectionKey = nil
+		}
+
+		range16FromStringPtr := func(s *string) *wgtypes.Range16 {
+			if s == nil || len(*s) == 0 {
+				return wgtypes.Range16FromSingle(0)
+			}
+			return wgtypes.Range16FromString(*s)
+		}
+
+		ifaceConfig.AdvancedSecurityConfig.ContentPaddingAddition = range16FromStringPtr(advSec.ContentPaddingAddition)
+		ifaceConfig.AdvancedSecurityConfig.RekeyAfterTime = range16FromStringPtr(advSec.RekeyAfterTime)
+		ifaceConfig.AdvancedSecurityConfig.RekeyTimeout = range16FromStringPtr(advSec.RekeyTimeout)
+		ifaceConfig.AdvancedSecurityConfig.RejectAfterTime = range16FromStringPtr(advSec.RejectAfterTime)
+		ifaceConfig.AdvancedSecurityConfig.KeepaliveTimeout = range16FromStringPtr(advSec.KeepaliveTimeout)
+		ifaceConfig.AdvancedSecurityConfig.HandshakeAttemptsLimit = range16FromStringPtr(advSec.HandshakeAttemptsLimit)
+		ifaceConfig.AdvancedSecurityConfig.RandomTrailers = &advSec.RandomTrailers
+		ifaceConfig.AdvancedSecurityConfig.DisableCookies = &advSec.DisableCookies
 	}
 
 	client := c.Clients[string(pi.Identifier)]

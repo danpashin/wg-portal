@@ -49,6 +49,16 @@ type AdvancedSecurity struct {
 	ThirdSpecialJunkPacket  *string `json:"i3"`
 	FourthSpecialJunkPacket *string `json:"i4"`
 	FifthSpecialJunkPacket  *string `json:"i5"`
+
+	HeaderProtectionKey    *string `json:"header_protection_key"`
+	ContentPaddingAddition *string `json:"content_padding_addition"`
+	RekeyAfterTime         *string `json:"rekey_after_time"`
+	RekeyTimeout           *string `json:"rekey_timeout"`
+	RejectAfterTime        *string `json:"reject_after_time"`
+	KeepaliveTimeout       *string `json:"keepalive_timeout"`
+	HandshakeAttemptsLimit *string `json:"handshake_attempts_limit"`
+	RandomTrailers         bool    `json:"random_trailers"`
+	DisableCookies         bool    `json:"disable_cookies"`
 }
 
 type Interface struct {
